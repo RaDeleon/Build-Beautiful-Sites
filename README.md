@@ -868,8 +868,8 @@ attribution required.
 
 See [LICENSE](LICENSE) for the full terms. This is a source-available custom
 license, not an OSI-approved open-source license, because it restricts resale.
-For commercial licensing or resale rights, contact Angelo De Leon at
-[radeleon415@gmail.com](mailto:radeleon415@gmail.com).
+For commercial licensing or resale rights, contact Angelo De Leon on GitHub at
+[@RaDeleon](https://github.com/RaDeleon).
 
 ---
 
