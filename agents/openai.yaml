@@ -1,0 +1,14 @@
+interface:
+  display_name: Build Beautiful Sites — by Angelo De Leon
+  short_description: Cinematic website system by Angelo De Leon
+  default_prompt: Use $build-beautiful-sites to plan and build a polished, conversion-focused
+    cinematic website from this brief.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  allow_implicit_invocation: true
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
