@@ -6,12 +6,24 @@ Use this reference when the user wants a complete, ready-to-adapt concept prompt
 
 - Treat the prompts as starting briefs, not permission to invent client facts.
 - Replace names, prices, metrics, schedules, specifications, testimonials, product capabilities, property features, and proof with verified information.
-- Translate provider or model instructions to the tools currently available; Higgsfield is optional unless the user explicitly selects it.
-- Create and approve a master reference image before related clips when identity consistency matters.
-- Prototype motion at lower cost before final-resolution generation and obtain approval before spending paid credits.
+- Preserve the complete prompt text below as an archetype archive, but treat named
+  models, settings, prices, frameworks, and dates as legacy prompt language.
+  Translate them to the selected provider's current schema after checking its
+  catalog, controls, cost, and limits.
+- Route every archetype through `cinematic-production.md`: create the production
+  package, approve the storyboard, approve a master reference still, preflight
+  costs, approve every clip, optimize it, and run visual QA.
+- Higgsfield is preferred when the user selects the integrated cinematic route;
+  another capable controlled image-to-video provider is acceptable. If no
+  suitable provider is available, deliver the approved static experience and
+  manual media handoff rather than a weak substitute.
+- Prototype motion at lower cost before final-resolution generation and obtain
+  approval before spending paid credits.
 - Keep essential copy and CTAs in semantic HTML.
 - Replace demo-only interactions with working production behavior before calling a site client-ready.
 - Derive principles from named reference sites without copying their identity, assets, text, or distinctive composition.
+- Treat “3D scroll” in these prompts as scroll-controlled prerecorded media unless
+  the implementation uses actual interactive geometry.
 
 ## Contents
 

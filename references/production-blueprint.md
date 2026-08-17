@@ -4,8 +4,8 @@
 
 1. Phase 0 — discovery
 2. Phase 1 — strategy
-3. Phase 2 — creative direction
-4. Phase 3 — storyboard and media
+3. Phase 2 — creative direction and production package
+4. Phase 3 — gated media production
 5. Phase 4 — implementation
 6. Phase 5 — integration
 7. Phase 6 — quality assurance
@@ -37,7 +37,7 @@ Define:
 
 Never invent client names, testimonials, awards, certifications, case-study results, prices, addresses, or statistics. Mark missing proof explicitly.
 
-## Phase 2 — creative direction
+## Phase 2 — creative direction and production package
 
 Build an original design system from principles:
 
@@ -52,9 +52,17 @@ When given a reference site or screenshots, extract its design grammar into neut
 
 Output `docs/creative-direction.md` before high-cost media generation.
 
-## Phase 3 — storyboard and media
+Create `docs/production-package.md` with the approved page structure, copy,
+visual world, motion mode/tier, storyboard, copy zones, prompts, provider,
+cost ceiling, mobile/static treatment, output manifest, and acceptance
+criteria. Read `cinematic-production.md` when the mode uses video.
 
-Choose a motion pattern using `motion-patterns.md`.
+## Phase 3 — gated media production
+
+Choose a motion pattern using `motion-patterns.md`. For Cinematic Scrub,
+follow the storyboard, master-still, video, chain, and encode gates in
+`cinematic-production.md`. Code scaffolding may proceed while rendering,
+but final integration cannot use unapproved media.
 
 For a single-shot scrub:
 
@@ -62,7 +70,10 @@ For a single-shot scrub:
 2. Create and approve one master hero still for identity and visual continuity.
 3. Create a six-panel storyboard image representing one continuous journey, using the master still as a reference when supported.
 4. Review subject identity, protected copy areas, crop safety, palette, lighting, and start/end payoff.
-5. Generate one continuous film only after the storyboard passes.
+5. Preflight the current provider/model cost and obtain bounded approval.
+6. Generate one continuous film only after the storyboard and master still pass.
+7. Inspect the whole clip plus sampled frames and obtain video approval before
+   final integration.
 
 For keyframe bridges:
 
@@ -70,8 +81,9 @@ For keyframe bridges:
 2. Generate one master hero still, then generate and approve all keyframes using it as a shared reference.
 3. Generate only the bridges needed between approved frames.
 4. Extract boundary frames and inspect both directions at each seam.
+5. Gate every bridge independently before using its final frame downstream.
 
-Create `docs/asset-manifest.md`. Keep raw and rejected media outside production/public folders. Put only selected optimized assets into the site.
+Create `docs/asset-manifest.md`. Keep raw and rejected media outside production/public folders. Put only selected optimized assets into the site. If no capable video provider is available, finish the approved production package and static experience instead of inserting weak placeholder footage.
 
 ## Phase 4 — implementation
 
@@ -88,7 +100,7 @@ Recommended component boundaries:
 - Footer/legal navigation
 - Media controller isolated from page content
 
-Requirements:
+Read `scrub-engineering.md` for a scroll-controlled film. Requirements:
 
 - Essential copy is ordinary HTML.
 - The page is useful before JavaScript and before media loads wherever the chosen framework permits.
@@ -110,7 +122,9 @@ Complete only integrations within scope, but never imply they work when they are
 
 ## Phase 6 — quality assurance
 
-Run the project's tests, type checks, lint, and production build. Then execute the checklist in `quality-gates.md`. Test at least:
+Run the project's tests, type checks, lint, and production build. Then execute
+the review loop in `visual-qa.md` and the checklist in `quality-gates.md`.
+Test at least:
 
 - Narrow mobile, modern desktop, keyboard-only, and reduced motion
 - Slow network and disabled/failed video

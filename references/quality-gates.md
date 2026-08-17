@@ -10,6 +10,7 @@
 6. Motion and media
 7. Responsive behavior
 8. Technical delivery
+9. Approval and evidence
 
 ## Truth and rights
 
@@ -57,13 +58,18 @@ If a cinematic concept cannot meet the chosen budget, shorten, compress, defer, 
 
 ## Motion and media
 
+- Cinematic mode has an approved production package, master still, and final video; every paid generation stayed within an approved ceiling.
+- Generated footage is inspected as film, sampled frames, paused frames, and reverse scrub.
 - Exact poster matches the first displayed frame.
 - No black flash, blank stage, autoplay audio, visible watermark, or generated text artifacts.
+- No identity, product-geometry, wardrobe, architecture, material, reflection, lighting, or horizon drift.
+- Final frame is a composed resting state that works with navigation and copy.
 - Fast scroll does not build an unbounded seek backlog.
 - Reverse scroll is tested, including every seam.
 - Media failure shows a useful static composition.
 - Center-safe subject and copy remain legible across crops.
 - Offscreen or unneeded animation work is suspended.
+- After three similar failed generations, the concept changes instead of burning further credits on prompt edits.
 
 ## Responsive behavior
 
@@ -84,3 +90,13 @@ Verify navigation, copy wrapping, touch targets, safe areas, crop, sticky behavi
 - No exposed secrets or client-only API credentials.
 - No dead links, console errors, duplicate listeners, runaway animation loops, or unreleased Blob URLs.
 - Deployment target and rollback path are documented.
+
+## Approval and evidence
+
+- The user approved the direction/production package before paid media.
+- The user approved the selected master still before animation.
+- The user approved every final cinematic clip before final integration.
+- Desktop and mobile rendered checkpoints were inspected and weak sections were revised.
+- QA records commands, breakpoints, media metadata, payloads, measured performance conditions, failures, fixes, and remaining risks.
+- The final status is labeled concept, production candidate, deployed, or client-ready.
+- Client-ready requires the user's rendered review, working conversion paths, approved final media, and verified live behavior.

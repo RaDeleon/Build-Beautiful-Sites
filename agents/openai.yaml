@@ -1,8 +1,8 @@
 interface:
   display_name: Build Beautiful Sites — by Angelo De Leon
-  short_description: Cinematic website system by Angelo De Leon
-  default_prompt: Use $build-beautiful-sites to plan and build a polished, conversion-focused
-    cinematic website from this brief.
+  short_description: Premium cinematic sites with strict media QA
+  default_prompt: Use $build-beautiful-sites to plan and build a premium cinematic
+    website from this brief, with approved source media and strict visual QA.
   icon_small: assets/icon.svg
   icon_large: assets/icon.svg
 policy:

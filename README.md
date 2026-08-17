@@ -1,6 +1,6 @@
 # Build Beautiful Sites
 
-A cross-platform AI skill for planning, art-directing, building, optimizing, and shipping premium conversion-focused websites in Claude Code, Codex, and ChatGPT.
+A cross-platform AI skill for planning, art-directing, producing, building, testing, and shipping premium conversion-focused websites in Claude Code, Codex, and ChatGPT.
 
 Created by **Angelo De Leon**.
 
@@ -15,7 +15,8 @@ Build Beautiful Sites helps Claude, Codex, and ChatGPT produce high-end websites
 * Strong positioning and conversion strategy
 * Premium visual art direction
 * Cinematic hero sections
-* Scroll-scrub storytelling
+* Scroll-scrub storytelling with a robust seeking controller
+* Controlled AI image-to-video production with approval gates
 * Responsive motion systems
 * Image and video generation prompts
 * A consistent master-reference workflow
@@ -24,7 +25,10 @@ Build Beautiful Sites helps Claude, Codex, and ChatGPT produce high-end websites
 * Mobile-specific media strategies
 * Performance optimization
 * Honest copy that does not invent testimonials, metrics, certifications, or client claims
+* Screenshot-level visual QA, not source-code-level guessing
 * QA documentation and implementation handoffs
+
+The core idea: the value is in strategy, art direction, controlled media production, implementation, iteration, and proof. A long prompt is not a website, and the first generated clip is not an approved asset.
 
 The skill includes the **Loud Pack**, a collection of ten detailed creative prompt systems for:
 
@@ -38,6 +42,46 @@ The skill includes the **Loud Pack**, a collection of ten detailed creative prom
 8. SaaS products
 9. Creative agencies
 10. Gyms and fitness studios
+
+## Production modes
+
+The skill picks one primary production mode before it starts building, and it uses the lightest mode that can actually deliver what you asked for. If you explicitly want the cinematic scroll experience, it will not quietly downgrade you to generic CSS motion.
+
+| Mode | Use when | Required media gate |
+| --- | --- | --- |
+| **Static premium** | Trust, content, SEO, speed, or conversion matters more than film | Approve key art and rendered design |
+| **Standard video** | Atmosphere can play by time without controlling the story | Approve poster and final clip |
+| **Cinematic scrub** | Scrolling must reveal, travel, assemble, descend, orbit, or transform through a film | Approve storyboard, master still, every clip, and final scrub encode |
+| **True 3D** | The user must manipulate real geometry, configuration, camera, or spatial state | Approve model/scene prototype and performance budget |
+
+Within Cinematic Scrub there are scope tiers, so you are not paying for a four-clip campaign when one shot tells the story:
+
+| Tier | Deliverable | Typical media |
+| --- | --- | --- |
+| S | Static premium | Approved key art plus restrained page motion |
+| V1 | Single journey | One continuous 6–10 second clip |
+| V2 | Chained journey | Two to four approved clips joined into a 12–24 second master |
+| V3 | Choreographed campaign | Several planned films, stills, and interactions |
+| 3D | Live geometry | Optimized model, textures, camera, and interaction |
+
+A strong V1 beats a drifting V3. Scrubbing a prerecorded film is never described as true 3D.
+
+## The media gates
+
+This is the part that separates the skill from a one-pass demo. In Cinematic Scrub mode the agent must stop and get your approval at five points:
+
+1. **Storyboard gate** — approve the journey, copy zones, ending, tier, provider, and total budget.
+2. **Master-still gate** — approve one still after inspecting composition, identity, geometry, brand details, copy space, crop safety, and stray trademarks.
+3. **Video gate** — approve the clip after inspecting the whole film plus sampled frames. Morphing, flicker, geometry drift, camera jumps, broken continuity, unusable copy space, and weak endings are rejections, not notes.
+4. **Chain gate** — approve every segment before its final rendered frame is used to start the next one.
+5. **Encode gate** — verify size, dimensions, duration, codec, pixel format, keyframe interval, first-frame poster, ending frame, and reverse-scrub behavior.
+
+Two rules that follow from this:
+
+* A completed generation is not an approved asset. The agent is expected to reject its own first clip when it fails the scorecard.
+* If no capable video provider is available, the agent stops after delivering the approved storyboard, master still, prompt package, asset manifest, and integration spec. It does not drop in generic stock or unrelated AI footage to finish the page.
+
+After three materially similar failed generations, the agent is instructed to change the visual concept instead of burning more credits rewriting the same prompt.
 
 ### Do I need Higgsfield?
 
@@ -65,7 +109,9 @@ The skill can work with:
 * Other image or video generation providers
 * Higgsfield, when available
 
-Higgsfield is useful when you want cinematic AI video, transitions, product shots, or motion assets. The finished website does not depend on Higgsfield at runtime.
+Higgsfield is the preferred integrated route when you select it and the connector is available, because of its references, camera controls, model choice, and edits. Any other capable controlled image-to-video provider is acceptable. The finished website never depends on Higgsfield at runtime.
+
+**Cost warning worth reading once:** a connector or API generation can deduct credits even when your web plan advertises unlimited generations. The skill is instructed to verify current model cost, schema, and balance for the actual route being used rather than assuming your subscription covers it. It will not promise you free connector generations.
 
 ### Requirements
 
@@ -75,7 +121,7 @@ You need:
 * An existing website repository or permission to create one
 * A frontend environment such as Next.js, React, Astro, or static HTML
 * Optional access to an image or video generator
-* Optional `ffmpeg` installation for the included media optimizer
+* Optional `ffmpeg` and `ffprobe` for the included media optimizer and inspector
 
 ### Skill structure
 
@@ -90,15 +136,34 @@ build-beautiful-sites/
 │   └── icon.svg
 ├── references/
 │   ├── agent-routing.md
+│   ├── cinematic-production.md
 │   ├── loud-pack.md
 │   ├── motion-patterns.md
 │   ├── operational-prompts.md
 │   ├── production-blueprint.md
 │   ├── quality-gates.md
-│   └── vertical-recipes.md
+│   ├── scrub-engineering.md
+│   ├── vertical-recipes.md
+│   └── visual-qa.md
 └── scripts/
+    ├── inspect_cinematic_media.sh
     └── optimize_cinematic_media.sh
 ```
+
+What each reference does:
+
+| File | Purpose |
+| --- | --- |
+| `references/agent-routing.md` | Claude, Codex, and ChatGPT invocation, tool discovery, and provider handoff |
+| `references/cinematic-production.md` | Scope tiers, story laws, production package, still and video gates, chaining, cost discipline |
+| `references/scrub-engineering.md` | Scroll-video loading, seeking controller, chapter pacing, responsive fallbacks, teardown |
+| `references/visual-qa.md` | Screenshot critique, media scorecards, design rejection test, revision loop |
+| `references/motion-patterns.md` | Choosing static, video, scrub, keyframes, or true 3D |
+| `references/operational-prompts.md` | Phase-specific prompts for handing work to another Claude or Codex session |
+| `references/loud-pack.md` | Ten full archetype concept prompts |
+| `references/vertical-recipes.md` | Production and conversion guidance by industry |
+| `references/production-blueprint.md` | The complete Phase 0–7 strategy-to-launch blueprint |
+| `references/quality-gates.md` | Truth, conversion, visual, accessibility, performance, motion, responsive, delivery, and approval gates |
 
 Copy the entire folder when installing the skill. Do not copy only `SKILL.md`, because the skill relies on its references and scripts. Keep the `LICENSE` file with it — see [License](#license).
 
@@ -111,6 +176,12 @@ git clone https://github.com/RaDeleon/Build-Beautiful-Sites.git
 ```
 
 The `cp -R <source> <destination>/build-beautiful-sites` form in each install command renames the folder for you.
+
+If you plan to run the media scripts directly, make sure they kept their executable bit after copying:
+
+```bash
+chmod +x /path/to/build-beautiful-sites/scripts/*.sh
+```
 
 ## Installing in Codex
 
@@ -214,6 +285,16 @@ The `agents/openai.yaml` file contains OpenAI-specific presentation metadata. Cl
 
 Official Claude Code skill documentation: [Extend Claude with skills](https://code.claude.com/docs/en/skills)
 
+### Optional: connecting Higgsfield
+
+Only needed if you want in-agent cinematic generation. In Claude interfaces that support custom connectors, the current endpoint is:
+
+```text
+https://mcp.higgsfield.ai/mcp
+```
+
+Verify the vendor's current setup instructions before relying on it. The skill is instructed to discover the connector's live tool schema, models, controls, balance, and costs at run time rather than assuming remembered method names or prices. If the connector cannot hand back downloadable files, the agent will ask you to download the approved outputs from your provider assets and drop them into the documented project location.
+
 ## Using it in ChatGPT
 
 If the skill has been installed through ChatGPT Skills, select it from the Skills interface or invoke it with:
@@ -231,6 +312,8 @@ Create a premium website for a luxury residential construction
 company in Los Angeles. Start with the creative brief and asset
 plan. Do not generate paid media until I approve the plan.
 ```
+
+ChatGPT is strongest here for direction, copy, boards, key art, and master-still candidates. When the repository work needs real edits and tests, hand the production package and approved assets to Codex or Claude Code. The skill keeps filenames and documents consistent so the next agent continues instead of restarting the creative work.
 
 ## Recommended way to use the skill
 
@@ -335,11 +418,11 @@ Inspect the repository and create:
 
 - The site brief
 - Creative direction
+- The production package
 - Page and section architecture
-- Motion plan
+- Motion mode and tier recommendation
 - Asset manifest
-- Production implementation plan
-- Estimated media-generation credits
+- Estimated media-generation credits and total ceiling
 
 Show me the plan before editing the website.
 
@@ -364,6 +447,32 @@ Do not replace working architecture without a clear technical reason.
 Do not invent claims or use paid media generation without approval.
 ```
 
+## Cinematic scrub mode
+
+Use this when you specifically want the scroll-controlled film experience and you want the strict workflow rather than generic scroll animation.
+
+```text
+Use Build Beautiful Sites by AD in Cinematic Scrub mode.
+
+Create docs/production-package.md first: conversion journey, page
+sections, exact hero and chapter copy, the physical visual journey
+and scroll direction, desktop copy zones, mobile and static
+composition, one master-still prompt, one image-to-video prompt per
+clip, continuity locks, rejection criteria, provider and model
+options from the current catalog, exact cost per attempt with a
+total ceiling and retry reserve, and output filenames.
+
+Pause for storyboard approval. Then show me master-still candidates
+and pause again. Only after I approve the still, preflight video
+costs and ask before spending.
+
+Inspect every clip at full length plus sampled frames before you
+integrate it. Reject morphing, geometry drift, flicker, camera
+jumps, broken copy space, and weak endings.
+```
+
+The skill ships a longer version of this as the cinematic media-director prompt in `references/operational-prompts.md`, along with a manual provider handoff prompt for when the video provider is not callable from your agent.
+
 ## Using the Loud Pack
 
 The Loud Pack is stored at:
@@ -372,7 +481,7 @@ The Loud Pack is stored at:
 references/loud-pack.md
 ```
 
-You can ask the skill to use a specific prompt by number, name, or industry.
+You can ask the skill to use a specific prompt by number, name, or industry. Each archetype is preserved as written, but named models, settings, prices, frameworks, and dates in those prompts are treated as legacy language and translated to whatever provider you actually selected. Every archetype still routes through the production package and the media gates.
 
 ### By number
 
@@ -452,128 +561,75 @@ The agent should adapt the selected system to the client. It should not blindly 
 
 ## Recommended production workflow
 
-### 1. Inspect
+### 1. Inspect and frame the problem
 
-The agent reviews:
+The agent reviews the repository structure, framework and dependencies, routes, existing components, current design system, existing assets, tests, build and deployment setup, and your supplied business facts. It then identifies the audience, offer, primary CTA, proof, objections, pages, conversion event, and success criteria, and writes `docs/site-brief.md`.
 
-* Repository structure
-* Framework and dependencies
-* Current routes
-* Existing components
-* Current design system
-* Existing assets
-* Build and deployment setup
-* User-provided business facts
+### 2. Research and establish an original direction
 
-### 2. Plan
+References are analyzed as design grammar — hierarchy, rhythm, grid, typography class, contrast, imagery, motion, density — not copied. The agent defines one brand premise, one primary CTA, one visual world, one motion grammar, and one signature element, and writes `docs/creative-direction.md`.
 
-The agent creates or updates:
+### 3. Choose scope and write the production package
+
+The agent selects the production mode and tier, then writes `docs/production-package.md`:
 
 ```text
 docs/site-brief.md
 docs/creative-direction.md
+docs/production-package.md
 docs/implementation-plan.md
 docs/asset-manifest.md
 ```
 
-### 3. Choose the motion level
+Approval of the production package comes before paid generation or large implementation changes.
 
-The skill uses the lightest motion technique capable of delivering the desired effect:
+### 4. Produce media through gates
 
-1. CSS transitions and keyframes
-2. Lightweight JavaScript
-3. Scroll-linked animation
-4. Optimized video
-5. Image sequences
-6. WebGL or 3D only when justified
+Storyboard → master still → video → chain → encode. Each one is a stop, not a formality. See [The media gates](#the-media-gates).
 
-### 4. Approve creative direction
+### 5. Process and record assets
 
-Before expensive media generation, review:
+Raw, rejected, review, and source files stay outside the production and public directories. Only selected, optimized assets go into the deployed site. `docs/asset-manifest.md` records source, ownership and license note, provider, model, references, prompt version, cost, dimensions, selected filename, rejection reasons, mobile variant, and fallback.
 
-* Visual direction
-* Hero concept
-* Master reference image
-* Section sequence
-* Keyframes
-* Mobile treatment
-* Reduced-motion fallback
-* Media-generation estimate
+### 6. Implement in the existing stack
 
-### 5. Generate or source assets
+Semantic hierarchy, navigation, proof, offers, conversion paths, and forms are built before cinematic media is layered on. Media control stays isolated from page content and out of per-frame framework state. Responsive art direction rather than a shrunken desktop composition. A complete static experience exists for mobile, reduced motion, failure, and unsupported playback.
 
-The preferred order is:
+### 7. Run the visual iteration loop
 
-1. Approved client assets
-2. Existing repository assets
-3. Assets generated with the current agent’s tools
-4. Manually generated assets from ChatGPT, Gemini, Higgsfield, or another provider
-5. Clearly documented placeholders
+The agent renders and inspects at desktop and mobile checkpoints — 1440×900, 1280×800, 768×1024, 390×844, and 375×667 at minimum — and critiques hierarchy, typography, spacing, crop, contrast, rhythm, originality, motion, performance, and conversion. Weak sections get rebuilt rather than decorated. Tests cover normal scroll, aggressive flicks, reverse scroll, rotation, keyboard use, reduced motion, missing video, slow network, cold load, navigation, CTA, and form outcomes. Results go in `docs/qa-report.md`.
 
-### 6. Build
+### 8. Launch honestly
 
-The agent implements:
+The repository's existing deployment target is used rather than a forced host. Live URL, HTTPS, assets, media seeking, metadata, redirects, analytics, forms, errors, and representative device behavior are verified. Performance is measured, not promised.
 
-* Semantic page structure
-* Responsive layouts
-* Reusable components
-* Real navigation
-* Conversion actions
-* Accessible interactions
-* Motion and scroll behavior
-* Media loading and fallback behavior
+### Status vocabulary
 
-### 7. Optimize
+The skill distinguishes four states and will tell you which one you have:
 
-The agent checks:
-
-* Image dimensions and compression
-* Video codecs and file size
-* Mobile-specific sources
-* Poster images
-* Lazy loading
-* Preload strategy
-* Reduced-motion behavior
-* Text readability
-* Layout stability
-
-### 8. Test
-
-The agent tests:
-
-* Desktop
-* Mobile
-* Keyboard navigation
-* Reduced motion
-* Missing media
-* Slow loading
-* Failed media requests
-* Main conversion paths
-* Production build
-
-### 9. Report
-
-The final QA record should be saved as:
-
-```text
-docs/qa-report.md
-```
+| Status | Meaning |
+| --- | --- |
+| **Concept** | Direction and package exist; media and implementation are not final |
+| **Production candidate** | Built and passing internal checks, not yet reviewed by you or deployed |
+| **Deployed** | Live on the target, verified technically |
+| **Client-ready** | You reviewed the rendered experience, blocking gates pass or are explicitly accepted, approved final media is integrated, conversion paths work, and nothing invented is presented as real |
 
 ## Working with Higgsfield or another video provider
 
 When a supported media provider is connected, the agent should:
 
-1. Create the site plan first
+1. Create the site plan and production package first
 2. Define the master visual reference
-3. Generate low-cost stills or keyframes
-4. Obtain approval
-5. Estimate credit usage
+3. Query the provider's current model catalog, schema, limits, and costs
+4. Generate low-cost stills or keyframes and obtain approval
+5. Preflight cost per attempt, total ceiling, and retry reserve, then obtain bounded approval
 6. Generate only the required motion assets
-7. Save prompts and asset metadata
-8. Optimize the selected files for the web
-9. Implement static and reduced-motion fallbacks
+7. Gate every clip before integration
+8. Save prompts, generation IDs, actual costs, and asset metadata
+9. Optimize the selected files for the web
+10. Implement static and reduced-motion fallbacks
 
-When no provider is connected, the agent should produce provider-ready prompts and an asset manifest. You can generate the assets manually and add them to the repository before asking the agent to continue.
+When no provider is connected, the agent produces provider-ready prompts and an asset manifest. You generate the assets manually, add them to the repository, and the agent gates and integrates them. It will not substitute a weaker clip to appear finished.
 
 ### Credit-saving instruction
 
@@ -590,46 +646,42 @@ A sensible default is:
 
 * Stills for concept approval
 * 720p or 1080p for prototypes
-* Short loops for web sections
-* No audio unless essential
+* Short clips, 6–10 seconds, for web sections
+* No audio, since scrub footage is muted and audio is stripped at encode
 * 4K only for final assets that genuinely need it
 
-## Media optimization
+## Media scripts
 
-The skill includes:
+Both scripts are optional helpers. `optimize_cinematic_media.sh` needs `ffmpeg`; `inspect_cinematic_media.sh` needs both `ffmpeg` and `ffprobe`.
+
+### Optimizing
 
 ```text
-scripts/optimize_cinematic_media.sh
+scripts/optimize_cinematic_media.sh desktop|mobile|poster|ending INPUT OUTPUT
 ```
 
-It requires `ffmpeg`.
-
-### Desktop video
+Desktop and mobile encodes are H.264 in an MP4 with `yuv420p`, no audio, fast-start metadata, and a deliberately short GOP so scroll seeking stays responsive. Mobile is additionally capped at 720p tall.
 
 ```bash
-./scripts/optimize_cinematic_media.sh \
-  desktop \
-  input.mp4 \
-  public/media/hero-desktop.mp4
+./scripts/optimize_cinematic_media.sh desktop raw.mp4 public/media/hero-desktop.mp4
+./scripts/optimize_cinematic_media.sh mobile  raw.mp4 public/media/hero-mobile.mp4
+./scripts/optimize_cinematic_media.sh poster  raw.mp4 public/media/hero-poster.jpg
+./scripts/optimize_cinematic_media.sh ending  raw.mp4 public/media/hero-ending.jpg
 ```
 
-### Mobile video
+`poster` extracts the exact first frame, so the poster matches frame zero instead of flashing. `ending` extracts the final frame, which is what the static and reduced-motion experience uses as its resting composition.
+
+### Inspecting
+
+```text
+scripts/inspect_cinematic_media.sh INPUT_VIDEO OUTPUT_DIRECTORY [PREFIX]
+```
 
 ```bash
-./scripts/optimize_cinematic_media.sh \
-  mobile \
-  input.mp4 \
-  public/media/hero-mobile.mp4
+./scripts/inspect_cinematic_media.sh public/media/hero-desktop.mp4 review/hero
 ```
 
-### Poster image
-
-```bash
-./scripts/optimize_cinematic_media.sh \
-  poster \
-  input.mp4 \
-  public/media/hero-poster.jpg
-```
+This writes codec, dimensions, pixel format, frame rate, duration, size, and bit rate to a metadata file, then extracts start, quarter, middle, three-quarter, and ending frames as JPEGs. Those five frames are what the video gate reviews — a clip that looks fine in motion can fall apart on a paused frame, and scrubbing exposes every paused frame.
 
 Keep the original source files outside the public production bundle when possible.
 
@@ -637,13 +689,18 @@ Keep the original source files outside the public production bundle when possibl
 
 The skill may create the following files in the website repository:
 
-| File                          | Purpose                                                                    |
-| ----------------------------- | -------------------------------------------------------------------------- |
-| `docs/site-brief.md`          | Audience, offer, goals, facts, assumptions, and constraints                |
-| `docs/creative-direction.md`  | Visual system, typography, composition, motion, and media direction        |
-| `docs/implementation-plan.md` | Components, routes, dependencies, execution order, and technical decisions |
-| `docs/asset-manifest.md`      | Asset source, prompt, version, location, license, and fallback             |
-| `docs/qa-report.md`           | Testing results, known issues, performance notes, and launch status        |
+| File                           | Purpose                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `docs/site-brief.md`           | Audience, offer, goals, facts, assumptions, and constraints                   |
+| `docs/creative-direction.md`   | Visual system, typography, composition, motion, and media direction           |
+| `docs/production-package.md`   | Mode and tier, page structure, approved copy, storyboard, copy zones, prompts, provider plan, cost ceiling, output filenames, and acceptance criteria |
+| `docs/implementation-plan.md`  | Components, routes, dependencies, execution order, and technical decisions    |
+| `docs/asset-manifest.md`       | Asset source, provider, model, prompt version, cost, license, location, rejections, and fallback |
+| `docs/qa-report.md`            | Testing results, known issues, performance notes, and launch status           |
+
+These files are also the cross-agent handoff format. A ChatGPT session can write the direction and package, Codex or Claude Code can implement it, and neither has to restart the creative work.
+
+If the project already has equivalent documents, the skill updates them rather than duplicating them.
 
 Relevant authored documents may include:
 
@@ -651,7 +708,7 @@ Relevant authored documents may include:
 Creative system: Build Beautiful Sites by AD
 ```
 
-The skill should not automatically place Angelo De Leon’s name or `AD` on the public client website, in metadata, legal pages, client-facing footers, or client brand materials unless explicitly requested.
+The skill should not automatically place Angelo De Leon's name or `AD` on the public client website, in metadata, legal pages, client-facing footers, or client brand materials unless explicitly requested.
 
 ## Production rules
 
@@ -666,14 +723,17 @@ The skill follows these rules:
 * Do not invent product capabilities.
 * Do not invent legal or compliance claims.
 * Clearly label placeholders and assumptions.
-* Ask for approval before paid media generation.
+* Ask for approval before paid media generation, with the current cost stated.
+* Treat a completed generation as a candidate, not an approved asset.
 * Use client assets before generating replacements.
-* Preserve the repository’s existing architecture unless change is justified.
+* Preserve the repository's existing architecture unless change is justified.
 * Build real semantic pages, not screenshot recreations.
+* Keep essential copy, navigation, CTAs, and proof in semantic HTML.
 * Support keyboard navigation and visible focus states.
 * Include reduced-motion behavior.
-* Provide static fallbacks for important motion content.
+* Provide static fallbacks for important motion content, designed rather than downgraded.
 * Avoid making the website dependent on an AI provider at runtime.
+* Judge quality from the rendered result, not from source code or a successful build.
 * Verify the production build before declaring the project complete.
 
 ## Troubleshooting
@@ -724,7 +784,21 @@ Use:
 /build-beautiful-sites
 ```
 
-If the top-level skills directory was created after the session began, start a new Claude Code session.
+If the top-level skills directory was created after the session began, start a new Claude Code session. Also confirm that the folder name matches the `name` field in `SKILL.md` exactly.
+
+### The scripts fail with "permission denied"
+
+The executable bit did not survive the copy:
+
+```bash
+chmod +x scripts/*.sh
+```
+
+Or call them through bash instead:
+
+```bash
+bash scripts/optimize_cinematic_media.sh desktop raw.mp4 out/hero.mp4
+```
 
 ### The agent is not using the Loud Pack
 
@@ -748,18 +822,45 @@ lower-cost alternatives, and which assets can be replaced with
 CSS, existing images, or lightweight motion.
 ```
 
+### The agent skipped the gates and built around unapproved footage
+
+Use:
+
+```text
+Do not integrate that clip yet.
+
+Extract the start, quarter, middle, three-quarter, and ending frames,
+show me the whole clip and those frames, and give me an honest
+critique against the film scorecard before we go further.
+```
+
+### The generations keep failing the same way
+
+Use:
+
+```text
+Stop rewriting this prompt. Propose a different visual mechanism
+that generates reliably — a more distant composition, a simpler
+subject, atmosphere instead of mechanism, or client renders and
+photography instead of generation.
+```
+
 ### The video is too large
 
 Ask the agent to:
 
 * Create separate desktop and mobile versions
-* Shorten the loop
+* Shorten the clip
 * Remove audio
-* Lower the bitrate
+* Lower the bitrate or raise the CRF before sacrificing keyframe density
 * Add a poster image
 * Avoid autoplaying nonessential media
 * Use reduced-motion fallbacks
-* Run the included optimization script
+* Run the included optimization script and measure the result
+
+### The scroll-scrub feels janky or stalls
+
+Ask the agent to check the items in `references/scrub-engineering.md`: seeks should be coalesced rather than queued per frame, the controller should rest once converged and when the region is offscreen, work should be suspended via `IntersectionObserver`, `currentTime` should not live in framework state, and the poster should stay visible until the requested frame decodes.
 
 ### The media provider is unavailable
 
@@ -768,10 +869,12 @@ Ask for a manual handoff:
 ```text
 Create provider-ready prompts for every missing asset.
 
-For each asset, include its purpose, dimensions, aspect ratio,
-duration, camera motion, subject consistency requirements,
-negative constraints, output filename, and where it belongs
-in the repository.
+For each asset, include its purpose and page chapter, reference files
+and their roles, dimensions, aspect ratio, duration, resolution,
+audio setting, structured controls, camera motion, subject
+consistency requirements, negative constraints, acceptance and
+rejection criteria, output filename, and where it belongs in the
+repository.
 ```
 
 ## Quick-start examples
@@ -830,8 +933,24 @@ Use Loud Pack #1 to build a launch page for a premium mechanical
 watch. Focus on materials, precision, craftsmanship, and product
 detail.
 
-Create the master-reference plan and proposed hero keyframes first.
-Estimate media-generation credits before generating animations.
+Create the production package and master-still candidates first.
+Preflight the current generation cost and give me a total ceiling
+before any paid video.
+```
+
+### Cinematic scroll experience
+
+```text
+/build-beautiful-sites
+
+Build a cinematic scroll experience for a small-batch whiskey brand.
+Single continuous journey, V1 tier — one 6–10 second clip, no chain.
+
+Down-scroll should feel like a descent into the barrel room. Reserve
+a calm left copy lane. End on a settled hero composition that works
+under the navigation.
+
+Storyboard and master still first. I approve before you spend.
 ```
 
 ## Recommended final instruction
@@ -845,8 +964,12 @@ Complete the real page structure, responsive behavior, navigation,
 conversion actions, accessibility, reduced-motion fallbacks, media
 optimization, error states, production build, and QA documentation.
 
+Inspect the rendered result at desktop and mobile rather than
+judging quality from the code or a successful build.
+
 Use only verified business facts. Clearly label any remaining
-placeholders or assumptions.
+placeholders or assumptions, and tell me whether this is a concept,
+a production candidate, deployed, or client-ready.
 ```
 
 ## License

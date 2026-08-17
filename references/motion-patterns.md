@@ -16,8 +16,8 @@
 | --- | --- | --- | --- |
 | Static + CSS | Professional services, SEO pages, most local businesses | Lowest | None needed |
 | Hero video | Emotional atmosphere without scroll dependence | Low-medium | Poster image |
-| Single-shot scrub | One product, one transformation, one continuous journey | Medium | Static chapter posters |
-| Keyframe bridge | Several story states that must remain visually controlled | High | Approved keyframes |
+| Single-shot scrub | One product, one reveal, one continuous physical journey | Medium | Approved master still and static chapter art |
+| Keyframe bridge | Several story states that must remain visually controlled | High | Approved keyframes and a shorter single-shot alternative |
 | True 3D | User must rotate, configure, inspect, or manipulate geometry | Highest | Rendered turntable/video |
 
 ## Static premium composition
@@ -30,7 +30,7 @@ Use a normal muted inline video when time-based playback is sufficient. Supply `
 
 ## Single-shot scroll scrub
 
-Generate one 10–15 second continuous shot. Map scroll progress `0..1` to `video.currentTime` `0..duration`. Use semantic chapters over the film. Do not export hundreds of separate images unless browser/device testing proves direct video seeking inadequate.
+Generate one controlled 6–10 second continuous shot by default. Map scroll progress `0..1` to `video.currentTime` `0..duration`. Use semantic chapters over the film. Do not export hundreds of separate images unless browser/device testing proves direct video seeking inadequate. Read `cinematic-production.md`, `scrub-engineering.md`, and `visual-qa.md` before production.
 
 Footage contract:
 
@@ -46,10 +46,12 @@ Footage contract:
 Continuity contract:
 
 - Generate one approved master hero still before video when a recurring product, person, vehicle, property, or environment must stay identifiable.
+- Do not animate the still until the user approves it.
 - Pass that same master still as an identity/look reference to every related generation when the provider supports references.
 - Keep wardrobe, materials, proportions, architecture, light direction, palette, and identifying details unchanged.
 - Favor a slightly softer but consistent clip over a sharper clip whose subject changes.
 - Spend extra takes on the hero first; it carries most of the perceived cinematic quality.
+- Reject the first generated clip when it fails the video scorecard; a completed generation is not an approved asset.
 
 Implementation contract:
 
