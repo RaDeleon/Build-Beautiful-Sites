@@ -1,0 +1,204 @@
+/* Build Beautiful Sites — starter design tokens
+ * Creative system: Build Beautiful Sites by AD
+ *
+ * Adapt these values to the client's visual world. Do not ship them unchanged
+ * as a house style. What must survive adaptation are the RELATIONSHIPS:
+ *
+ *   1. Display type is dramatically larger and tighter than body type.
+ *      Timid hero scale is the single most common tell of a generated page.
+ *   2. Negative tracking on display, positive tracking on small uppercase
+ *      labels, zero on body. Leaving display at 0 reads as a default.
+ *   3. Canvas is tinted toward the visual world. Never #000 or #FFF.
+ *   4. Exactly one accent hue, used at most three times per viewport.
+ *   5. Section rhythm grows non-linearly. A flat 8px grid everywhere is why
+ *      generic pages feel like stacked cards.
+ *   6. Depth comes from line, then tone, then shadow. Glow is a last resort.
+ *
+ * Verify contrast after retinting. The ratios below hold for these values only.
+ */
+
+:root {
+  /* ---------------------------------------------------------------- type */
+  /* Two families maximum. A third is a bug unless it is a mono for data. */
+  --font-display: "Your Display", Georgia, "Times New Roman", serif;
+  --font-body: "Your Body", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  /* Display scale — fluid, ratio ~1.333 at desktop. Go big or go static. */
+  --text-display-1: clamp(3rem, 1.5rem + 7.5vw, 8rem);
+  --text-display-2: clamp(2.25rem, 1.4rem + 4.2vw, 4.5rem);
+  --text-display-3: clamp(1.75rem, 1.25rem + 2.5vw, 3rem);
+
+  /* Body scale — ratio ~1.2. Base is 17px, not 16px: it reads calmer. */
+  --text-lg: 1.25rem;    /* 20px — lede, pull quotes */
+  --text-base: 1.0625rem; /* 17px — body default */
+  --text-sm: 0.9375rem;  /* 15px — captions, secondary */
+  --text-xs: 0.8125rem;  /* 13px — eyebrows, labels, meta */
+
+  /* Line height — display is tight, body is generous. */
+  --leading-display: 0.98;
+  --leading-tight: 1.15;
+  --leading-body: 1.6;
+  --leading-loose: 1.75;
+
+  /* Tracking — this is where premium type separates from default type. */
+  --tracking-display: -0.03em;
+  --tracking-tight: -0.015em;
+  --tracking-body: 0;
+  --tracking-label: 0.09em; /* pair with uppercase + --text-xs only */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* Measure — hard limits. Full-width body text is a layout failure. */
+  --measure-body: 68ch;
+  --measure-lede: 52ch;
+  --measure-display: 18ch; /* headlines wrap on purpose, not by accident */
+
+  /* -------------------------------------------------------------- color */
+  /* Dark canvas default: this system's center of gravity is cinematic.
+   * Retint both themes toward the project's visual world. */
+  --canvas: #0A0B0D;
+  --surface: #121417;
+  --surface-raised: #1A1D21;
+  --ink: #F2F3F5;        /* 17.6:1 on canvas */
+  --ink-muted: #A8ADB5;  /*  8.3:1 on canvas */
+  --ink-subtle: #7E858E; /*  5.0:1 on canvas — meta only, never body */
+  --line: #23272C;       /* structural, not readable */
+  --line-strong: #343A41;
+
+  /* One accent. Three uses per viewport, maximum. */
+  --accent: #C8A66B;
+  --accent-ink: #0A0B0D;
+
+  --scrim: color-mix(in srgb, var(--canvas) 62%, transparent);
+
+  /* ------------------------------------------------------------ spacing */
+  /* Component scale — 4px base, doubling at the top. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* Section rhythm — fluid and deliberately large. Cramped section spacing
+   * is what makes a page read as a template. Vary these between sections
+   * rather than applying one value everywhere. */
+  --section-tight: clamp(3rem, 6vw, 5rem);
+  --section-base: clamp(5rem, 10vw, 9rem);
+  --section-loose: clamp(8rem, 16vw, 14rem);
+
+  /* -------------------------------------------------------------- layout */
+  --content-max: 72rem;
+  --content-narrow: 44rem;
+  --content-wide: 90rem;
+  --gutter: clamp(1.25rem, 5vw, 4rem);
+  --grid-columns: 12;
+  --grid-gap: clamp(1rem, 2vw, 2rem);
+
+  /* ------------------------------------------------- radius, line, depth */
+  /* Restrained. Pill-shaped everything is on the rejection list; --radius-full
+   * is for badges and avatars, not buttons and cards. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+
+  --border: 1px solid var(--line);
+  --border-strong: 1px solid var(--line-strong);
+
+  /* Tight and neutral. No colored glow, no 40px purple blur. */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.28);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.32);
+  --shadow-lg: 0 16px 48px rgb(0 0 0 / 0.40);
+
+  /* -------------------------------------------------------------- motion */
+  --duration-fast: 120ms;  /* hover, press — must feel instant */
+  --duration-base: 220ms;  /* state change */
+  --duration-slow: 420ms;  /* entrance, reveal */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.6, 0, 0.2, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---------------------------------------------------------- cinematic */
+  --stage-height: 100dvh;
+  --region-single: 480vh; /* one 6–10s journey */
+  --region-chained: 900vh; /* two to four chapters */
+}
+
+/* Light theme. Warm off-white canvas — #FFF is as much a default tell as #000. */
+:root[data-theme="light"] {
+  --canvas: #FAF9F7;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --ink: #16181B;        /* 16.1:1 on canvas */
+  --ink-muted: #55595F;  /*  7.1:1 on canvas */
+  --ink-subtle: #6B7078; /*  4.9:1 on canvas — meta only */
+  --line: #E4E1DC;
+  --line-strong: #CFCAC2;
+  --accent: #8A6A2F;     /*  4.7:1 — darkened so it stays legible as text */
+  --accent-ink: #FFFFFF;
+  --shadow-sm: 0 1px 2px rgb(20 18 15 / 0.06);
+  --shadow-md: 0 4px 16px rgb(20 18 15 / 0.08);
+  --shadow-lg: 0 16px 48px rgb(20 18 15 / 0.10);
+}
+
+/* ------------------------------------------------------------- base rules */
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  max-width: var(--measure-display);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-display-1); }
+h2 { font-size: var(--text-display-2); }
+h3 { font-size: var(--text-display-3); line-height: var(--leading-tight); }
+
+p { max-width: var(--measure-body); text-wrap: pretty; }
+
+.eyebrow {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Reduced motion: neutralize duration tokens at the source so every
+ * transition and animation built on them collapses at once. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+    --duration-base: 0.01ms;
+    --duration-slow: 0.01ms;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

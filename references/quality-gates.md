@@ -29,8 +29,16 @@
 
 ## Visual system
 
-- Typography, spacing, color, radius, border, shadow, and motion rules are internally consistent.
-- Sections vary intentionally without feeling like unrelated templates.
+Check against the values in `design-system.md`, not against taste:
+
+- Typography, spacing, color, radius, border, shadow, and motion come from one token set. No ad-hoc per-section values.
+- Two type families at most. Display type at least 4× body at desktop. Body measure ≤ 68ch.
+- One accent hue, at most three uses per viewport. Canvas is tinted, not pure black or white.
+- Primary text ≥ 7:1 and secondary ≥ 4.5:1, verified against the worst media frame behind them.
+- At most two elevation levels. No colored or wide-blur glow.
+- Adjacent sections differ on at least two of: column count, alignment, media presence, background tone, density.
+- Exactly one signature element, and removing it would visibly weaken the design.
+- Interaction feedback under 150 ms; entrance travel ≤ 24 px; entrances play once.
 - Effects support hierarchy instead of competing with it.
 - Mobile art direction is composed, not merely scaled down.
 
@@ -52,9 +60,40 @@ Measure rather than claiming. Unless the project defines stricter budgets, targe
 - INP at or below 200 ms when measurable
 - Initial JavaScript appropriate to the framework and page complexity
 - No cinematic media on the critical path to readable content
-- A documented aggregate media budget, with separate mobile encodes
 
-If a cinematic concept cannot meet the chosen budget, shorten, compress, defer, replace with a normal video, or fall back to static art.
+### Media budget
+
+A cinematic hero and a 2.5 s mobile LCP are in direct tension. They are
+reconciled by one rule: **the LCP element is the poster or the headline, never
+the film.** Paint the poster and the copy from static markup, set the video
+source only inside the motion-capable path, and the film's weight stops
+competing with the LCP measurement.
+
+Within that, hold these ceilings unless the project defines stricter ones.
+Measure with `scripts/inspect_cinematic_media.sh` — do not estimate.
+
+| Asset | Target | Hard ceiling |
+| --- | --- | --- |
+| Desktop scrub film, 6–10 s | 5 MB | 8 MB |
+| Mobile scrub encode, 6–10 s | 2 MB | 3 MB |
+| Poster and ending frame, each | 100 KB | 150 KB |
+| Critical bytes before readable content | 200 KB | 300 KB |
+| Aggregate page media, desktop | 6 MB | 8 MB |
+| Aggregate page media, mobile | 2.5 MB | 3.5 MB |
+
+Chained films are measured as one total, not per segment. Short GOP encoding
+inflates size deliberately; that cost buys responsive seeking and is not the
+first thing to cut.
+
+When an encode exceeds its ceiling, remediate in this order:
+
+1. Shorten the clip — a beat removed beats every beat compressed.
+2. Reduce output width.
+3. Raise CRF.
+4. Reduce keyframe density last; it is what makes scrubbing work at all.
+5. Drop to standard video, then to the approved still.
+
+If a cinematic concept cannot meet the budget after step 5, the mode was wrong for the project. Say so and propose a lighter production mode rather than shipping a hero that fails on the devices the audience actually uses.
 
 ## Motion and media
 

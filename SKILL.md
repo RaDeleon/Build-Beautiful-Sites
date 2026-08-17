@@ -92,9 +92,11 @@ If no capable video provider is available, stop the cinematic media phase after 
 
 ### 6. Implement in the existing stack
 
-- Read `references/production-blueprint.md` before a full build.
+- Read `references/production-blueprint.md` before a full build and `references/design-system.md` before writing layout, type, or color.
 - Preserve working architecture. Use static HTML only when it fits; use the project's React, Next.js, Astro, CMS, commerce, or server stack when already required.
 - Build semantic hierarchy, navigation, proof, offers, conversion paths, and forms before layering cinematic media.
+- Adapt `assets/starter/tokens.css` into the project's styling method rather than inventing ad-hoc values per section. If the project already has tokens, extend them.
+- Copy `assets/starter/scrub-controller.js` for scroll-scrub work instead of reimplementing seek coalescing and teardown.
 - Isolate media control from page content and avoid per-frame framework state.
 - Use responsive art direction, not a shrunken desktop composition.
 - Provide a complete static experience for mobile, reduced motion, failure, and unsupported playback.
@@ -129,10 +131,18 @@ Follow `references/visual-qa.md` and `references/quality-gates.md`.
 
 ## Design floor
 
-- Use a distinctive typography system, purposeful grid, controlled palette, deliberate crops, meaningful whitespace, and one signature element.
-- Avoid indiscriminate gradients, excessive glass, pill-shaped everything, centered copy in every section, identical adjacent layouts, fake HUDs, placeholder statistics, and unedited marketing clichés.
-- Keep accents rare. Tint canvases toward the visual world instead of defaulting to pure black or white.
-- Make motion support physical story direction and hierarchy. Suspend offscreen work and animate transforms/opacity when possible.
+Read `references/design-system.md` before writing layout, type, or color. Start
+from `assets/starter/tokens.css` and adapt it to the visual world; keep the
+relationships even when every value changes. These are the non-negotiable ones:
+
+- Two type families maximum. Display type at least 4× body size at desktop. Body base 17px. Negative tracking on display, positive on small uppercase labels, zero on body.
+- Measure: body ≤ 68ch, headlines ≤ 18ch. Build hierarchy from size, weight, color, and space — not size alone.
+- Twelve columns, but do not fill twelve. Adjacent sections must differ on at least two of: column count, alignment, media presence, background tone, density.
+- One accent hue, at most three uses per viewport. Tint canvases toward the visual world; never pure black or white. Primary text ≥ 7:1, secondary ≥ 4.5:1, measured against the worst media frame behind it.
+- Depth in order: line, then tone, then tight neutral shadow. Maximum two elevation levels. Glow is a rejection, not an option.
+- Exactly one signature element, load-bearing enough that removing it weakens the design. A gradient, a glass card, or a glow is not one.
+- Interaction feedback under 150ms. Entrance travel ≤ 24px, stagger ≤ 60ms, entrances play once. Animate transforms and opacity only, and suspend offscreen work.
+- Avoid indiscriminate gradients, excessive glass, pill-shaped everything, centered copy in more than one section, identical adjacent layouts, fake HUDs, placeholder statistics, and unedited marketing clichés.
 - Preserve semantic landmarks, logical headings, visible focus, keyboard behavior, contrast, touch targets, meaningful alternatives, and `prefers-reduced-motion`.
 
 ## Completion contract
@@ -143,6 +153,7 @@ Use `references/quality-gates.md` as the final checklist. If the requested spect
 
 ## Reference routing
 
+- `references/design-system.md`: typography, layout, color, depth, rhythm, signature element, motion values, and premium tells — the concrete values behind the design floor.
 - `references/agent-routing.md`: Claude/Codex/ChatGPT and provider handoff behavior.
 - `references/cinematic-production.md`: tiers, story laws, still/video gates, Higgsfield/controlled-provider workflow, chaining, and cost discipline.
 - `references/scrub-engineering.md`: robust scroll-video loading, seeking, pacing, responsive fallbacks, and teardown.
@@ -153,3 +164,11 @@ Use `references/quality-gates.md` as the final checklist. If the requested spect
 - `references/vertical-recipes.md`: production and conversion guidance by industry.
 - `references/production-blueprint.md`: complete strategy-to-launch blueprint.
 - `references/quality-gates.md`: truth, conversion, visual, accessibility, performance, motion, responsive, and delivery gates.
+
+## Starter assets
+
+Copy and adapt rather than reimplement:
+
+- `assets/starter/tokens.css`: type scale, spacing scale, color roles, radius, depth, and motion values with the reasoning inline.
+- `assets/starter/scrub-controller.js`: reference scroll-scrub implementation — coalesced seeks, a loop that rests on convergence and offscreen, chapter helpers, and complete teardown.
+- `scripts/optimize_cinematic_media.sh`, `scripts/inspect_cinematic_media.sh`: encode and gate cinematic media.

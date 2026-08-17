@@ -98,89 +98,38 @@ For a large Blob fallback, show honest progress, abort after sustained no-progre
 
 Keep scroll target, smoothed progress, and media seeking outside React/Vue component state. Coalesce seeks so a decoder never receives an unbounded backlog.
 
-```js
-export function createScrubController({ video, progress, render }) {
-  let target = 0;
-  let shown = 0;
-  let raf = 0;
-  let last = 0;
-  let seeking = false;
-  let queuedTime = null;
-  let destroyed = false;
+The reference implementation ships with this skill. Copy it into the project
+instead of reimplementing it:
 
-  const clamp01 = value => Math.max(0, Math.min(1, value));
-
-  function requestSeek(time) {
-    if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-    const bounded = Math.max(0, Math.min(video.duration, time));
-    if (seeking) {
-      queuedTime = bounded;
-      return;
-    }
-    seeking = true;
-    try {
-      video.currentTime = bounded;
-    } catch {
-      seeking = false;
-    }
-  }
-
-  function finishSeek() {
-    seeking = false;
-    if (queuedTime === null) return;
-    const next = queuedTime;
-    queuedTime = null;
-    requestSeek(next);
-  }
-
-  function tick(now) {
-    if (destroyed) return;
-    const dt = Math.min(100, now - (last || now));
-    last = now;
-    const response = 0.16;
-    shown += (target - shown) *
-      (1 - Math.pow(1 - response, dt / 16.667));
-
-    if (Math.abs(target - shown) < 0.0005) shown = target;
-
-    requestSeek(shown * video.duration);
-    render(shown);
-
-    if (shown !== target) {
-      raf = requestAnimationFrame(tick);
-    } else {
-      raf = 0;
-      last = 0;
-    }
-  }
-
-  function update() {
-    target = clamp01(progress());
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-
-  function failSeek() {
-    seeking = false;
-    queuedTime = null;
-  }
-
-  video.addEventListener('seeked', finishSeek);
-  video.addEventListener('error', failSeek);
-
-  return {
-    update,
-    destroy() {
-      destroyed = true;
-      if (raf) cancelAnimationFrame(raf);
-      video.removeEventListener('seeked', finishSeek);
-      video.removeEventListener('error', failSeek);
-      queuedTime = null;
-    }
-  };
-}
+```text
+assets/starter/scrub-controller.js
 ```
 
-Attach `update` to a passive scroll listener only while the cinematic region is near the viewport. Use `IntersectionObserver` to suspend work offscreen.
+It exports `createScrubController` (smoothed progress, coalesced seeks,
+`snap()` for ready and resize, full teardown), `mountScrubStage` (region
+progress, a passive scroll listener that only runs while the region is near the
+viewport via `IntersectionObserver`, readiness handling, teardown), and the
+chapter helpers `smoothstep`, `bandOpacity`, and `activeChapter`.
+
+```js
+import { mountScrubStage } from './scrub-controller.js';
+
+const stage = mountScrubStage({
+  region: document.querySelector('#cinematic-region'),
+  video: document.querySelector('#hero-film'),
+  render: progress => paintChapters(progress)
+});
+
+// on unmount / route change
+stage.destroy();
+```
+
+The behavior that matters, whichever implementation is used:
+
+- A seek issued while the decoder is busy replaces the queued target rather than stacking behind it.
+- The rAF loop stops when progress converges and while the region is offscreen.
+- `render` is called per frame, so it must be cheap and delta-gated.
+- Everything — frames, listeners, observers, object URLs — is released on teardown.
 
 Delta-gate DOM changes:
 
@@ -205,18 +154,11 @@ const chapters = [
 Give each caption a short eased entrance, long fully visible plateau, and short eased exit. Keep the first caption settled at page load and the final caption settled at the ending.
 
 ```js
-const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
-const smoothstep = (edge0, edge1, value) => {
-  const t = clamp((value - edge0) / Math.max(0.0001, edge1 - edge0));
-  return t * t * (3 - 2 * t);
-};
+import { bandOpacity, activeChapter } from './scrub-controller.js';
 
-function bandOpacity(progress, start, end) {
-  const ramp = Math.min(0.025, (end - start) / 3);
-  const enter = smoothstep(start, start + ramp, progress);
-  const leave = 1 - smoothstep(end - ramp, end, progress);
-  return enter * leave;
-}
+// Short eased entrance, long readable plateau, short eased exit.
+const opacity = bandOpacity(progress, chapter.start, chapter.end);
+const current = activeChapter(chapters, progress);
 ```
 
 Validate with normal and aggressive wheel/touch-like scroll steps. A headline that appears only during careful dragging is not readable.

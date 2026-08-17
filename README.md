@@ -133,10 +133,14 @@ build-beautiful-sites/
 ├── agents/
 │   └── openai.yaml
 ├── assets/
-│   └── icon.svg
+│   ├── icon.svg
+│   └── starter/
+│       ├── scrub-controller.js
+│       └── tokens.css
 ├── references/
 │   ├── agent-routing.md
 │   ├── cinematic-production.md
+│   ├── design-system.md
 │   ├── loud-pack.md
 │   ├── motion-patterns.md
 │   ├── operational-prompts.md
@@ -154,6 +158,7 @@ What each reference does:
 
 | File | Purpose |
 | --- | --- |
+| `references/design-system.md` | Typography, layout, color, depth, rhythm, signature element, motion values, and premium tells |
 | `references/agent-routing.md` | Claude, Codex, and ChatGPT invocation, tool discovery, and provider handoff |
 | `references/cinematic-production.md` | Scope tiers, story laws, production package, still and video gates, chaining, cost discipline |
 | `references/scrub-engineering.md` | Scroll-video loading, seeking controller, chapter pacing, responsive fallbacks, teardown |
@@ -165,7 +170,35 @@ What each reference does:
 | `references/production-blueprint.md` | The complete Phase 0–7 strategy-to-launch blueprint |
 | `references/quality-gates.md` | Truth, conversion, visual, accessibility, performance, motion, responsive, delivery, and approval gates |
 
-Copy the entire folder when installing the skill. Do not copy only `SKILL.md`, because the skill relies on its references and scripts. Keep the `LICENSE` file with it — see [License](#license).
+Copy the entire folder when installing the skill. Do not copy only `SKILL.md`, because the skill relies on its references, starter assets, and scripts. Keep the `LICENSE` file with it — see [License](#license).
+
+## The design system
+
+Most of what makes a site look generated is not a missing effect — it is a
+missing decision. Timid hero scale, untouched letter-spacing, a flat 8px grid
+everywhere, `#000` canvases, an accent used fifteen times. So the skill ships
+values rather than adjectives.
+
+`references/design-system.md` holds the reasoning. `assets/starter/tokens.css`
+holds the values, with the rules written inline so they survive being adapted:
+
+* Two type families maximum, display type at least 4× body size at desktop, body base 17px
+* Tracking by role — negative on display, positive on small uppercase labels, zero on body
+* Measure capped at 68ch for body and 18ch for headlines, so headlines wrap on purpose
+* Twelve columns you are told not to fill, with three tiers of section spacing rather than one
+* Tinted canvases, never pure black or white, with contrast minimums per text role
+* One accent hue, at most three uses per viewport
+* Depth in order — line, then tone, then a tight neutral shadow. No glow.
+* Interaction feedback under 150ms, entrance travel under 24px, entrances that play once
+
+Adapt the values to the client's visual world; keep the relationships. If the
+project already has a token system, the skill extends it instead.
+
+`assets/starter/scrub-controller.js` is the tested reference implementation of
+the scroll-scrub engine — coalesced seeks, a loop that rests when progress
+converges and while the region is offscreen, chapter helpers, and complete
+teardown. Copy it rather than reimplementing it; the failure modes it avoids
+are subtle and expensive to rediscover.
 
 ## Getting the skill
 
@@ -684,6 +717,30 @@ scripts/inspect_cinematic_media.sh INPUT_VIDEO OUTPUT_DIRECTORY [PREFIX]
 This writes codec, dimensions, pixel format, frame rate, duration, size, and bit rate to a metadata file, then extracts start, quarter, middle, three-quarter, and ending frames as JPEGs. Those five frames are what the video gate reviews — a clip that looks fine in motion can fall apart on a paused frame, and scrubbing exposes every paused frame.
 
 Keep the original source files outside the public production bundle when possible.
+
+### Media budget
+
+A cinematic hero and a 2.5s mobile LCP pull against each other. The skill
+reconciles them with one rule: **the LCP element is the poster or the headline,
+never the film.** The poster and copy paint from static markup; the video source
+is only set inside the motion-capable path.
+
+Within that, these are the ceilings, measured with the inspect script rather
+than estimated:
+
+| Asset | Target | Hard ceiling |
+| --- | --- | --- |
+| Desktop scrub film, 6–10s | 5 MB | 8 MB |
+| Mobile scrub encode, 6–10s | 2 MB | 3 MB |
+| Poster and ending frame, each | 100 KB | 150 KB |
+| Critical bytes before readable content | 200 KB | 300 KB |
+| Aggregate page media, desktop | 6 MB | 8 MB |
+| Aggregate page media, mobile | 2.5 MB | 3.5 MB |
+
+Over the ceiling, the remediation order is: shorten the clip, reduce width,
+raise CRF, and only then reduce keyframe density — that density is what makes
+scrubbing responsive, so it is the last thing to give up. If a concept still
+cannot fit, the mode was wrong for the project and the skill should say so.
 
 ## Expected project documentation
 
