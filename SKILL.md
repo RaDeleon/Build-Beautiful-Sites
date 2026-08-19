@@ -1,6 +1,6 @@
 ---
 name: build-beautiful-sites
-description: Plan, art-direct, produce, build, test, and ship premium conversion-focused websites, including cinematic Higgsfield/Seedance-style scroll experiences, controlled AI image-to-video, polished static sites, product stories, luxury landing pages, and true 3D when geometry is essential. Use in Claude Code, Claude Desktop, Cowork, Codex, or ChatGPT for $10k/$20k website requests, Awwwards-style sites, premium redesigns, AI-assisted web production, scroll-scrub video, cinematic product launches, immersive portfolios, or recreating the principles of a reference experience without copying it.
+description: Plan, art-direct, produce, build, test, and ship premium conversion-focused websites, including cinematic Higgsfield/Seedance-style scroll experiences, controlled AI image-to-video, polished static sites, product stories, luxury landing pages, and true 3D when geometry is essential. Use in Claude Desktop, Cowork, Claude Code, Codex, or ChatGPT for $10k/$20k website requests, Awwwards-style sites, premium redesigns, AI-assisted web production, scroll-scrub video, cinematic product launches, immersive portfolios, or recreating the principles of a reference experience without copying it.
 ---
 
 # Build Beautiful Sites
@@ -33,13 +33,17 @@ Build custom, production-ready websites whose value comes from strategy, art dir
 
 Read `references/agent-routing.md` to identify the current agent, available browser/preview tools, media tools, connectors, repository constraints, and deployment path.
 
-Surfaces differ in reach, not in standard. Claude Code and Codex hold the whole
-workflow. Claude Desktop's chat tab is a direction and authoring surface whose
-code runs in a sandbox away from the repository; Cowork reaches the folders the
-user attaches; ChatGPT is strongest before implementation. Check the capability
-table in that reference and say plainly which gates this surface can close
-before committing to a production mode. Never quietly skip a gate the surface
-cannot reach.
+Claude Desktop is the primary surface, because this skill's media gates are
+human visual approvals. A generation must come back somewhere the user can
+actually see it. Approve stills and clips in the Desktop chat tab, implement in
+Cowork with the project folder attached, and hand off to Claude Code or Codex
+when the repository, shell, or deployment target is out of reach. ChatGPT is
+strongest before implementation.
+
+Check the gate table in that reference and say plainly which gates this surface
+can close before committing to a production mode. Never quietly skip a gate the
+surface cannot reach, and never approve media on a surface that cannot display
+it at review size.
 
 Choose one primary production mode:
 
@@ -80,6 +84,10 @@ Read `references/motion-patterns.md` for the selection matrix. For Cinematic Scr
 ### 4. Produce media through gates
 
 Follow `references/cinematic-production.md`.
+
+Run every gate where the user can see the media at review size. If the current
+surface cannot display a returned still or clip, move the approval to one that
+can rather than describing the footage on the user's behalf.
 
 Mandatory gates for Cinematic Scrub:
 

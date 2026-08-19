@@ -1,6 +1,8 @@
 # Build Beautiful Sites
 
-A cross-platform AI skill for planning, art-directing, producing, building, testing, and shipping premium conversion-focused websites in Claude Code, Claude Desktop, Cowork, Codex, and ChatGPT.
+A cross-platform AI skill for planning, art-directing, producing, building, testing, and shipping premium conversion-focused websites in Claude Desktop, Cowork, Claude Code, Codex, and ChatGPT.
+
+**Built for Claude Desktop.** The media gates in this skill are human visual approvals — you have to actually look at the master still and watch the clip before either is allowed into the page. A terminal cannot show you what Higgsfield returned, so those gates collapse into trusting the agent's description, which is the exact failure the gates exist to prevent. Desktop is where a generation comes back somewhere you can see it. Claude Code and Codex remain useful for repository, encode, and deploy work, and the skill hands off to them cleanly.
 
 Created by **Angelo De Leon**.
 
@@ -153,7 +155,8 @@ build-beautiful-sites/
 │   └── visual-qa.md
 └── scripts/
     ├── inspect_cinematic_media.sh
-    └── optimize_cinematic_media.sh
+    ├── optimize_cinematic_media.sh
+    └── package_for_desktop.sh
 ```
 
 What each reference does:
@@ -218,6 +221,65 @@ If you plan to run the media scripts directly, make sure they kept their executa
 chmod +x /path/to/build-beautiful-sites/scripts/*.sh
 ```
 
+## Installing in Claude Desktop
+
+This is the primary surface. Claude Desktop does not read `.claude/skills/` — filesystem installation is Claude Code only, and custom skills do not sync between surfaces, so this needs its own upload.
+
+### 1. Enable code execution
+
+Skills do not run without it.
+
+* Free, Pro, and Max: **Settings > Capabilities**, enable code execution and file creation
+* Team and Enterprise: an owner enables both **Code execution and file creation** and **Skills** in **Organization settings > Skills**
+
+### 2. Package the skill as a ZIP
+
+`SKILL.md` must sit at the top level *inside* the folder, not at the top level of the archive, and the folder name must match the `name` field in `SKILL.md` exactly. This repository clones as `Build-Beautiful-Sites`, so the packaged copy has to be renamed to `build-beautiful-sites` or the upload is rejected.
+
+Use the included script, which handles the rename and the exclusions:
+
+```bash
+scripts/package_for_desktop.sh
+```
+
+It writes `build-beautiful-sites.zip` to your Desktop. To do it by hand:
+
+```bash
+cp -R /path/to/Build-Beautiful-Sites /tmp/build-beautiful-sites
+cd /tmp
+zip -r build-beautiful-sites.zip build-beautiful-sites -x '*.DS_Store' '*/.git/*'
+```
+
+### 3. Upload it
+
+Go to **Customize > Skills**, press **+**, choose **Create skill**, then **Upload a skill**, and submit the ZIP. It appears in your skills list with a toggle.
+
+Uploaded skills are private to your account. Re-upload after editing the skill — there is no live reload from disk.
+
+Official documentation: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+
+### Which Desktop surface to use for what
+
+Desktop runs the skill two ways, and the split is deliberate: approve media in chat where you can see it, then implement in Cowork where your files are.
+
+| Gate or phase | Desktop chat | Cowork |
+| --- | --- | --- |
+| 1–3 Brief, creative direction, production package | Yes | Yes |
+| 4 Master-still gate, seen at review size | Yes | Yes |
+| 4 Video gate, clip actually watched | Yes | Yes |
+| 5 Encode with `ffmpeg` | Probe the container first | Probe the session first |
+| 5–6 Repository read and write | Files you download | Connected folders |
+| 7 Rendered visual QA | Connector required | Computer use, Pro and Max |
+| 8 Deploy | No | Connected folders plus credentials |
+
+**Chat tab.** Where phases 1 through 4 belong. Connector generations return into the conversation, so you can actually look at the still and the clip and approve them. Code runs in a sandboxed container on Anthropic's infrastructure, so it cannot see your repository unless you upload files or connect a local MCP server.
+
+**Cowork.** Attach your project folder and Claude reads and writes inside it. Paid plans only, and it reaches local files through the desktop app, which must be running. Memory from chat does not carry into Cowork, so the `docs/` files are what move approved decisions across.
+
+**Computer use** is what closes phase 7 on Desktop without a separate browser MCP. Enable it at **Settings > General > Desktop app > Computer use**. It is a research preview on **Pro and Max only** — Team and Enterprise have no access at this time and need a browser or preview connector instead. It opens your browser, opens files, and runs dev tools, so the agent can load the built page and inspect it at real breakpoints. Your desktop has to stay awake, permission is per application, and there is no sandbox between Claude and the apps it drives, so close sensitive windows before a QA pass.
+
+**Connectors.** Remote connectors — including Higgsfield at `https://mcp.higgsfield.ai/mcp` — work on every surface, and Anthropic reaches them from its cloud, so the server must be publicly reachable. Local MCP servers and desktop extensions run only in Claude Desktop and Claude Code.
+
 ## Installing in Codex
 
 ### Project installation
@@ -276,6 +338,8 @@ Official Codex skill documentation: [Build skills for Codex and ChatGPT](https:/
 
 ## Installing in Claude Code
 
+Optional. Use it as a handoff target for repository, encode, and deploy work — not to approve media, which cannot be reviewed at size in a terminal.
+
 ### Project installation
 
 This is recommended when the skill belongs to a specific repository.
@@ -329,55 +393,6 @@ https://mcp.higgsfield.ai/mcp
 ```
 
 Verify the vendor's current setup instructions before relying on it. The skill is instructed to discover the connector's live tool schema, models, controls, balance, and costs at run time rather than assuming remembered method names or prices. If the connector cannot hand back downloadable files, the agent will ask you to download the approved outputs from your provider assets and drop them into the documented project location.
-
-## Installing in Claude Desktop
-
-Claude Desktop does not read `.claude/skills/`. Filesystem installation is Claude Code only, and custom skills do not sync between surfaces — a skill you already use in Claude Code has to be uploaded here separately.
-
-### 1. Enable code execution
-
-Skills do not run without it.
-
-* Free, Pro, and Max: **Settings > Capabilities**, enable code execution and file creation
-* Team and Enterprise: an owner enables both **Code execution and file creation** and **Skills** in **Organization settings > Skills**
-
-### 2. Package the skill as a ZIP
-
-`SKILL.md` must sit at the top level *inside* the folder, not at the top level of the archive, and the folder name must match the `name` field in `SKILL.md` exactly. This repository clones as `Build-Beautiful-Sites`, so rename the copy you package to `build-beautiful-sites` or the upload will be rejected.
-
-```bash
-cp -R /path/to/Build-Beautiful-Sites /tmp/build-beautiful-sites
-cd /tmp
-zip -r build-beautiful-sites.zip build-beautiful-sites -x '*.DS_Store' '*/.git/*'
-```
-
-### 3. Upload it
-
-Go to **Customize > Skills**, press **+**, choose **Create skill**, then **Upload a skill**, and submit the ZIP. It appears in your skills list with a toggle.
-
-Uploaded skills are private to your account. Re-upload the ZIP after editing the skill — there is no live reload from disk.
-
-Official documentation: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
-
-### Which Desktop surface you are on
-
-Desktop runs the skill two different ways, and the difference decides how far the workflow can go.
-
-| Phase | Desktop chat | Cowork |
-| --- | --- | --- |
-| 1–3 Brief, creative direction, production package | Yes | Yes |
-| 4 Storyboard, prompts, gate criteria | Yes | Yes |
-| 4 Paid generation | Connector required | Connector required |
-| 5 Encode and optimize media | No repository access | Yes, if `ffmpeg` is in the session |
-| 6 Implement in the repository | Delivers files for you to commit | Yes, inside attached folders |
-| 7 Rendered visual QA | Browser or preview connector required | Browser or preview connector required |
-| 8 Deploy | No | Yes, with credentials |
-
-**Chat tab.** Code runs in a sandboxed container on Anthropic's infrastructure, not on your machine. It cannot see your repository unless you upload files or connect a local MCP server. Use it for the brief, direction, production package, storyboard, prompts, copy, adapted tokens, and component source, and take the files it produces into Claude Code.
-
-**Cowork.** Attach your project folder to the session and the agent reads, writes, and runs code inside it. Attach reference material read-only (`ro`) when it must not be modified. Cloud sessions can reach local files only while the desktop app is open on that machine, and local MCP servers do not run in cloud sessions.
-
-**Connectors.** Remote connectors — including Higgsfield at `https://mcp.higgsfield.ai/mcp` — work on every surface, and Anthropic reaches them from its cloud, so the server must be publicly reachable. Local MCP servers and desktop extensions run only in Claude Desktop and Claude Code; those are what give you filesystem access, localhost preview, and browser control. Without a browser or preview connector there is no rendered inspection on Desktop, so phase 7 stays open and the result is a handoff rather than a launch.
 
 ## Using it in ChatGPT
 
@@ -468,6 +483,16 @@ certifications, addresses, pricing, or legal language.
 
 ## Invocation examples
 
+### Claude Desktop
+
+```text
+Use Build Beautiful Sites. Build a premium conversion-focused website
+for a boutique architecture firm. Tell me first which phases this
+surface can complete, then start with the creative direction.
+```
+
+In Cowork, attach the repository folder to the session first.
+
 ### Codex
 
 ```text
@@ -483,16 +508,6 @@ first and preserve the existing framework.
 for a boutique architecture firm. Inspect the current repository
 first and preserve the existing framework.
 ```
-
-### Claude Desktop
-
-```text
-Use Build Beautiful Sites. Build a premium conversion-focused website
-for a boutique architecture firm. Tell me first which phases this
-surface can complete, then start with the creative direction.
-```
-
-In Cowork, attach the repository folder to the session first.
 
 ### ChatGPT
 
@@ -746,7 +761,14 @@ A sensible default is:
 
 ## Media scripts
 
-Both scripts are optional helpers. `optimize_cinematic_media.sh` needs `ffmpeg`; `inspect_cinematic_media.sh` needs both `ffmpeg` and `ffprobe`.
+The two media scripts are optional helpers. `optimize_cinematic_media.sh` needs `ffmpeg`; `inspect_cinematic_media.sh` needs both `ffmpeg` and `ffprobe`. Neither is guaranteed inside a Claude Desktop or Cowork sandbox, so the skill probes for them before offering to encode and records the required settings in `docs/asset-manifest.md` when they are missing.
+
+`package_for_desktop.sh` needs nothing but `zip`. It builds the Claude Desktop upload archive, renaming the folder to match the `name` field in `SKILL.md` and excluding `.git` and `.DS_Store`:
+
+```bash
+scripts/package_for_desktop.sh              # writes ~/Desktop/build-beautiful-sites.zip
+scripts/package_for_desktop.sh /tmp         # or choose an output directory
+```
 
 ### Optimizing
 

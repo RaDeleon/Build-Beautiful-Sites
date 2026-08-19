@@ -1,11 +1,11 @@
-# Claude Code, Claude Desktop, Codex, and ChatGPT Routing
+# Claude Desktop, Claude Code, Codex, and ChatGPT Routing
 
 ## Contents
 
 1. Shared contract
-2. Surface capability gates
-3. Claude Code
-4. Claude Desktop
+2. Where the gates live
+3. Claude Desktop
+4. Claude Code
 5. Codex
 6. ChatGPT
 7. Media/provider routing
@@ -26,21 +26,35 @@ Before acting, inspect:
 
 Never assume a consumer chat subscription includes API, connector, or programmatic generation access.
 
-## Surface capability gates
+## Where the gates live
 
-The workflow is identical everywhere. What changes is which gates the current
-surface can actually close. Establish this before promising an outcome.
+This skill is built on human visual approval. The master-still gate, the video
+gate, and the chain gate all require the user to actually look at what the
+provider returned, at a size where morphing, flicker, geometry drift, and a weak
+ending are visible. A surface that cannot display returned media inline cannot
+run those gates — it can only ask the user to trust the agent's description,
+which is the failure this skill exists to prevent.
 
-| Capability | Claude Code | Claude Desktop chat | Cowork | Codex | ChatGPT |
-| --- | --- | --- | --- | --- | --- |
-| Read/write the repository | Native | Uploaded files only | Attached folders | Native | Rarely |
-| Shell, `ffmpeg`, build tools | Native | Sandbox container; verify | Attached folders | Native | No |
-| Rendered inspection | Browser/preview tools | Connector required | Connector required | Testing tools | No |
-| Still generation | Connector or image tools | Connector required | Connector required | Image tools | Native |
-| Deploy | Native | No | Folders plus credentials | Native | No |
+That is why Claude Desktop is the primary surface. A Higgsfield or other
+connector generation comes back into the Desktop conversation as something the
+user can see and judge immediately. Terminal surfaces cannot do this, so they
+are handoff targets for repository, encode, and deploy work rather than places
+to approve media.
 
-Two rules follow from the table:
+| Gate or phase | Desktop chat | Cowork | Claude Code |
+| --- | --- | --- | --- |
+| 1–3 Brief, direction, production package | Yes | Yes | Yes |
+| 4 Master-still gate, seen inline at review size | Yes | Yes | No — terminal |
+| 4 Video gate, clip actually watched | Yes | Yes | No |
+| 5 Encode gate, `ffmpeg` | Probe the container first | Probe the session first | Native |
+| 5–6 Repository read and write | Files to download | Connected folders | Native |
+| 7 Rendered visual QA | Connector required | Computer use, Pro and Max | Browser/preview tools |
+| 8 Deploy | No | Connected folders plus credentials | Native |
 
+Three rules follow:
+
+- Never run a media gate on a surface where the user cannot see the media at
+  review size. Move the gate; do not narrate the footage in its place.
 - A surface that cannot render the page cannot pass the visual gates. Complete
   every phase up to the gate, record precisely what remains unverified in
   `docs/qa-report.md`, and hand off. Never describe an unrendered build as
@@ -49,17 +63,11 @@ Two rules follow from the table:
   Return named files matching the documented project paths so the next surface
   can place them without redoing creative work.
 
-## Claude Code
-
-- Invoke as `/build-beautiful-sites` or through a matching natural-language request.
-- Use a project installation at `.claude/skills/build-beautiful-sites/` or personal installation at `~/.claude/skills/build-beautiful-sites/`.
-- Inspect the real rendered application with available browser/preview capabilities rather than relying only on lint/build.
-- This is the reference surface: repository, shell, media scripts, tests, and deployment are all in reach. Prefer it for phases 5 through 8.
-
 ## Claude Desktop
 
-Desktop runs this skill on two surfaces with different reach. Identify which one
-is active before committing to a production mode.
+The default surface. It runs the skill two ways, and the split is deliberate:
+approve media in chat where it is visible, then implement in Cowork where the
+files are.
 
 ### Installing
 
@@ -68,31 +76,43 @@ only, and custom skills do not sync between surfaces — a skill installed for
 Claude Code must be uploaded separately here.
 
 - Enable code execution first, or skills will not run at all: Settings > Capabilities on Free, Pro, and Max; Organization settings > Skills on Team and Enterprise, where an owner must enable both code execution and skills.
-- Package the `build-beautiful-sites` folder as a `.zip` with `SKILL.md` at the top level inside the folder.
+- Package the `build-beautiful-sites` folder as a `.zip` with `SKILL.md` at the top level inside the folder, and make the folder name match the `name` field exactly.
 - Upload through Customize > Skills > `+` > Create skill > Upload a skill.
 - Re-upload after editing the skill. There is no live reload from disk.
 - Upload failures are almost always an oversized archive, a folder name that does not match the `name` field, a missing `SKILL.md`, or invalid characters in the name or description.
 
-### Chat tab
+### Chat tab — direction and media gates
 
 - Invoke by name or through a matching natural-language request.
-- Code runs in a sandboxed container, not on the user's machine. It cannot see the repository unless files are uploaded or a local connector supplies access.
-- Treat this as a direction and authoring surface. It is fully capable of phases 1 through 4: the brief, creative direction, production package, storyboard, prompts, copy, adapted tokens, and component source.
-- Deliver work as downloadable files named for their documented destinations, and let the user commit them or continue in Claude Code.
-- Do not run the media scripts here on repository media. Verify the container even has `ffmpeg` before offering to encode anything.
+- This is where phases 1 through 4 belong. Returned stills and clips render in the conversation, so the master-still, video, and chain gates work as written.
+- Present one candidate at a time against the scorecard in `references/visual-qa.md`. Name what to look at — composition, identity, geometry, copy space, crop safety, the ending — instead of asking a bare "does this look good?"
+- Code runs in a sandboxed container, not on the user's machine, and cannot see the repository unless files are uploaded or a local connector supplies access.
+- Deliver implementation work as downloadable files named for their documented destinations.
+- Do not assume the container has `ffmpeg`. Probe for it before offering to encode, and record the required settings in `docs/asset-manifest.md` when it is absent.
 
-### Cowork
+### Cowork — implementation and QA
 
-- Attach the project folder to the session. The agent reads, writes, and runs code inside attached roots, which is the Desktop surface where phases 5 through 8 can genuinely happen.
-- Attach reference material read-only (`ro`) when it must not be modified.
-- Cloud sessions reach local files only while the desktop app is open on that machine, and local MCP servers do not run in cloud sessions.
-- Confirm `ffmpeg` and `ffprobe` inside the session before relying on the media scripts.
+- Attach the project folder to the session; Claude reads and writes only in connected folders. This is where phases 5 through 8 happen.
+- Cowork is paid-plan only, and reaches local files through the desktop app, which must be running.
+- Outputs are delivered into the session to preview and download.
+- Confirm `ffmpeg` and `ffprobe` in the session before relying on the media scripts.
+- Memory from chat does not carry into Cowork, and Cowork consumes usage faster than ordinary chat. Carry approved decisions across in the `docs/` files rather than assuming continuity.
+
+### Computer use
+
+Computer use is what closes phase 7 on Desktop without a separate browser MCP.
+
+- Enable it at Settings > General > Desktop app > Computer use, on the current Claude Desktop build for macOS or Windows.
+- Research preview, Pro and Max only. Team and Enterprise have no access at this time, so on those plans phase 7 needs a browser or preview connector instead.
+- It opens the browser, opens files, and runs dev tools; use it to load the built page and inspect the real rendered result at the breakpoints in `references/visual-qa.md`.
+- Claude prefers connectors, then Chrome, then direct screen interaction, which is slower and more error-prone. Prefer a real dev server over screen driving where possible.
+- The desktop must stay awake, permission is granted per application, and there is no sandbox between Claude and the applications it drives. Close sensitive windows before a QA pass.
 
 ### Connectors on Desktop
 
-- Remote connectors work on every surface, and Anthropic connects to them from its cloud rather than from the user's machine, so the server must be publicly reachable.
+- Remote connectors work on every surface, and Anthropic reaches them from its cloud rather than from the user's machine, so the server must be publicly reachable.
 - Local MCP servers and desktop extensions run only in Claude Desktop and Claude Code. Use them for filesystem access, localhost preview, and browser control.
-- Without a browser or preview connector there is no rendered inspection on Desktop, so phase 7 stays open and the work is a handoff, not a launch.
+- Higgsfield belongs on this surface for exactly the reason above: the generation returns where the user can see it and approve it.
 
 ### Connector behavior on any Claude surface
 
@@ -100,6 +120,18 @@ Claude Code must be uploaded separately here.
 - The current official custom-connector endpoint is `https://mcp.higgsfield.ai/mcp`; verify vendor instructions when guiding a fresh connection.
 - Connected generations may deduct credits regardless of unlimited web-app access. Never promise free or unlimited connector generations.
 - If the connector cannot return downloadable files, have the user download approved outputs from their provider assets and place them in the documented project location.
+
+## Claude Code
+
+A handoff target, not the place to approve media. Generated stills and clips
+cannot be reviewed at size in a terminal, so route the media gates to Desktop
+and bring the approved assets here.
+
+- Invoke as `/build-beautiful-sites` or through a matching natural-language request.
+- Use a project installation at `.claude/skills/build-beautiful-sites/` or personal installation at `~/.claude/skills/build-beautiful-sites/`.
+- Strongest for phases 5 through 8: repository, shell, media scripts, tests, and deployment are all in reach.
+- Inspect the real rendered application with available browser/preview capabilities rather than relying only on lint/build.
+- Accept an approved production package and asset manifest from Desktop and continue from them. Do not regenerate approved media here.
 
 ## Codex
 

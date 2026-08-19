@@ -25,11 +25,16 @@ Do not wait until the end:
 
 At each checkpoint, identify blockers, fix them, render again, and compare. Do not merely list known defects.
 
-Before starting, confirm the current surface can actually render and inspect the
-page. Claude Desktop chat and ChatGPT cannot without a browser or preview
-connector. Where inspection is impossible, do not soften these checkpoints into
-opinions about the source code — leave them open in `docs/qa-report.md` and hand
-the build to a surface that can render it.
+Two different capabilities are needed here, and they usually live on different
+surfaces. Reviewing returned stills and clips needs a surface that displays
+media inline — the Claude Desktop chat tab. Reviewing the rendered page needs a
+browser: Cowork computer use on Pro and Max, a browser or preview connector
+otherwise, or Claude Code's preview tooling.
+
+Never substitute one for the other, and never soften a checkpoint into an
+opinion about the source code. Where inspection is genuinely impossible, leave
+the checkpoint open in `docs/qa-report.md` and hand the build to a surface that
+can perform it.
 
 ## Media review
 
