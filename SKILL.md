@@ -1,6 +1,6 @@
 ---
 name: build-beautiful-sites
-description: Plan, art-direct, produce, build, test, and ship premium conversion-focused websites, including cinematic Higgsfield/Seedance-style scroll experiences, controlled AI image-to-video, polished static sites, product stories, luxury landing pages, and true 3D when geometry is essential. Use in Claude Code, Codex, or ChatGPT for $10k/$20k website requests, Awwwards-style sites, premium redesigns, AI-assisted web production, scroll-scrub video, cinematic product launches, immersive portfolios, or recreating the principles of a reference experience without copying it.
+description: Plan, art-direct, produce, build, test, and ship premium conversion-focused websites, including cinematic Higgsfield/Seedance-style scroll experiences, controlled AI image-to-video, polished static sites, product stories, luxury landing pages, and true 3D when geometry is essential. Use in Claude Code, Claude Desktop, Cowork, Codex, or ChatGPT for $10k/$20k website requests, Awwwards-style sites, premium redesigns, AI-assisted web production, scroll-scrub video, cinematic product launches, immersive portfolios, or recreating the principles of a reference experience without copying it.
 ---
 
 # Build Beautiful Sites
@@ -32,6 +32,14 @@ Build custom, production-ready websites whose value comes from strategy, art dir
 ## Start by routing the job
 
 Read `references/agent-routing.md` to identify the current agent, available browser/preview tools, media tools, connectors, repository constraints, and deployment path.
+
+Surfaces differ in reach, not in standard. Claude Code and Codex hold the whole
+workflow. Claude Desktop's chat tab is a direction and authoring surface whose
+code runs in a sandbox away from the repository; Cowork reaches the folders the
+user attaches; ChatGPT is strongest before implementation. Check the capability
+table in that reference and say plainly which gates this surface can close
+before committing to a production mode. Never quietly skip a gate the surface
+cannot reach.
 
 Choose one primary production mode:
 
@@ -88,7 +96,7 @@ If no capable video provider is available, stop the cinematic media phase after 
 - Keep raw, rejected, review, and source files outside production/public directories.
 - Put only selected, optimized assets into the deployed site.
 - Record source, ownership/license note, provider, model, references, prompt version, cost, dimensions, selected filename, rejection reasons, mobile variant, and fallback in `docs/asset-manifest.md`.
-- Use `scripts/optimize_cinematic_media.sh` and `scripts/inspect_cinematic_media.sh` when `ffmpeg`/`ffprobe` are available.
+- Use `scripts/optimize_cinematic_media.sh` and `scripts/inspect_cinematic_media.sh` when a shell and `ffmpeg`/`ffprobe` are available. Verify both, rather than assuming a sandbox provides them. Where they are missing, specify the exact encode settings in `docs/asset-manifest.md` and treat the encode gate as open.
 
 ### 6. Implement in the existing stack
 
@@ -111,6 +119,7 @@ Follow `references/visual-qa.md` and `references/quality-gates.md`.
 - Reject generic AI patterns and rebuild weak sections instead of adding more gradients, glow, glass, cards, or animation.
 - Test normal scroll, aggressive flicks, reverse scroll, rotation, keyboard use, reduced motion, missing video, slow network, cold load, navigation, CTA, and form outcomes.
 - Record tests, measurements, fixes, accepted exceptions, and remaining risks in `docs/qa-report.md`.
+- If the current surface cannot render the page, this loop does not run. Finish everything upstream of it, list each unverified gate in `docs/qa-report.md`, and hand off. An unrendered build is never reviewed, tested, or client-ready.
 
 ### 8. Launch honestly
 
@@ -154,12 +163,12 @@ Use `references/quality-gates.md` as the final checklist. If the requested spect
 ## Reference routing
 
 - `references/design-system.md`: typography, layout, color, depth, rhythm, signature element, motion values, and premium tells — the concrete values behind the design floor.
-- `references/agent-routing.md`: Claude/Codex/ChatGPT and provider handoff behavior.
+- `references/agent-routing.md`: per-surface capability gates, installation, and provider handoff behavior for Claude Code, Claude Desktop, Cowork, Codex, and ChatGPT.
 - `references/cinematic-production.md`: tiers, story laws, still/video gates, Higgsfield/controlled-provider workflow, chaining, and cost discipline.
 - `references/scrub-engineering.md`: robust scroll-video loading, seeking, pacing, responsive fallbacks, and teardown.
 - `references/visual-qa.md`: screenshot critique, video rejection, motion tests, and revision loop.
 - `references/motion-patterns.md`: choose static, video, scrub, keyframes, or true 3D.
-- `references/operational-prompts.md`: phase-specific prompts for another Claude or Codex session.
+- `references/operational-prompts.md`: phase-specific prompts for handing a phase to another Claude, Cowork, or Codex session.
 - `references/loud-pack.md`: ten full archetype prompts with descriptions.
 - `references/vertical-recipes.md`: production and conversion guidance by industry.
 - `references/production-blueprint.md`: complete strategy-to-launch blueprint.

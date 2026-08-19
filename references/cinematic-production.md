@@ -92,6 +92,7 @@ Use Higgsfield when the user chooses it and the current agent can access its con
 ### Claude, Codex, ChatGPT, and Gemini roles
 
 - Use Claude or Codex for research, direction, prompts, code, processing, testing, and documentation.
+- Claude Desktop's chat tab is well suited to the storyboard, prompt package, and gate criteria, but its sandbox cannot process repository media or inspect a rendered page. Move to Cowork with the folder attached, or to Claude Code, for encoding, integration, and QA.
 - Use ChatGPT or Gemini image capabilities for concept boards, key art, master still candidates, edits, and posters when available and suitable.
 - Use any video provider only after the same still and video gates. A different model does not waive production discipline.
 - If the current agent cannot operate the selected provider, create a precise manual-generation handoff and wait for the returned assets.

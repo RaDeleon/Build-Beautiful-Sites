@@ -1,6 +1,6 @@
 # Build Beautiful Sites
 
-A cross-platform AI skill for planning, art-directing, producing, building, testing, and shipping premium conversion-focused websites in Claude Code, Codex, and ChatGPT.
+A cross-platform AI skill for planning, art-directing, producing, building, testing, and shipping premium conversion-focused websites in Claude Code, Claude Desktop, Cowork, Codex, and ChatGPT.
 
 Created by **Angelo De Leon**.
 
@@ -10,7 +10,7 @@ The skill's command name is `build-beautiful-sites`. The display name is **Build
 
 ### What it does
 
-Build Beautiful Sites helps Claude, Codex, and ChatGPT produce high-end websites with:
+Build Beautiful Sites helps Claude Code, Claude Desktop, Cowork, Codex, and ChatGPT produce high-end websites with:
 
 * Strong positioning and conversion strategy
 * Premium visual art direction
@@ -117,11 +117,13 @@ Higgsfield is the preferred integrated route when you select it and the connecto
 
 You need:
 
-* Claude Code, Codex, or ChatGPT with Skills support
+* Claude Code, Claude Desktop, Cowork, Codex, or ChatGPT with Skills support
 * An existing website repository or permission to create one
 * A frontend environment such as Next.js, React, Astro, or static HTML
 * Optional access to an image or video generator
-* Optional `ffmpeg` and `ffprobe` for the included media optimizer and inspector
+* Optional `ffmpeg` and `ffprobe`, plus a real shell, for the included media optimizer and inspector
+
+Not every surface reaches every phase. Claude Code and Codex hold the whole workflow. Claude Desktop's chat tab runs the skill in a sandbox that cannot see your repository, so it is a direction and authoring surface; Cowork reaches the folders you attach to the session. The skill is instructed to state which gates the current surface can close instead of quietly skipping the ones it cannot.
 
 ### Skill structure
 
@@ -159,12 +161,12 @@ What each reference does:
 | File | Purpose |
 | --- | --- |
 | `references/design-system.md` | Typography, layout, color, depth, rhythm, signature element, motion values, and premium tells |
-| `references/agent-routing.md` | Claude, Codex, and ChatGPT invocation, tool discovery, and provider handoff |
+| `references/agent-routing.md` | Per-surface capability gates, installation, tool discovery, and provider handoff for Claude Code, Claude Desktop, Cowork, Codex, and ChatGPT |
 | `references/cinematic-production.md` | Scope tiers, story laws, production package, still and video gates, chaining, cost discipline |
 | `references/scrub-engineering.md` | Scroll-video loading, seeking controller, chapter pacing, responsive fallbacks, teardown |
 | `references/visual-qa.md` | Screenshot critique, media scorecards, design rejection test, revision loop |
 | `references/motion-patterns.md` | Choosing static, video, scrub, keyframes, or true 3D |
-| `references/operational-prompts.md` | Phase-specific prompts for handing work to another Claude or Codex session |
+| `references/operational-prompts.md` | Phase-specific prompts for handing work to another Claude, Cowork, or Codex session |
 | `references/loud-pack.md` | Ten full archetype concept prompts |
 | `references/vertical-recipes.md` | Production and conversion guidance by industry |
 | `references/production-blueprint.md` | The complete Phase 0–7 strategy-to-launch blueprint |
@@ -328,6 +330,55 @@ https://mcp.higgsfield.ai/mcp
 
 Verify the vendor's current setup instructions before relying on it. The skill is instructed to discover the connector's live tool schema, models, controls, balance, and costs at run time rather than assuming remembered method names or prices. If the connector cannot hand back downloadable files, the agent will ask you to download the approved outputs from your provider assets and drop them into the documented project location.
 
+## Installing in Claude Desktop
+
+Claude Desktop does not read `.claude/skills/`. Filesystem installation is Claude Code only, and custom skills do not sync between surfaces — a skill you already use in Claude Code has to be uploaded here separately.
+
+### 1. Enable code execution
+
+Skills do not run without it.
+
+* Free, Pro, and Max: **Settings > Capabilities**, enable code execution and file creation
+* Team and Enterprise: an owner enables both **Code execution and file creation** and **Skills** in **Organization settings > Skills**
+
+### 2. Package the skill as a ZIP
+
+`SKILL.md` must sit at the top level *inside* the folder, not at the top level of the archive, and the folder name must match the `name` field in `SKILL.md` exactly. This repository clones as `Build-Beautiful-Sites`, so rename the copy you package to `build-beautiful-sites` or the upload will be rejected.
+
+```bash
+cp -R /path/to/Build-Beautiful-Sites /tmp/build-beautiful-sites
+cd /tmp
+zip -r build-beautiful-sites.zip build-beautiful-sites -x '*.DS_Store' '*/.git/*'
+```
+
+### 3. Upload it
+
+Go to **Customize > Skills**, press **+**, choose **Create skill**, then **Upload a skill**, and submit the ZIP. It appears in your skills list with a toggle.
+
+Uploaded skills are private to your account. Re-upload the ZIP after editing the skill — there is no live reload from disk.
+
+Official documentation: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+
+### Which Desktop surface you are on
+
+Desktop runs the skill two different ways, and the difference decides how far the workflow can go.
+
+| Phase | Desktop chat | Cowork |
+| --- | --- | --- |
+| 1–3 Brief, creative direction, production package | Yes | Yes |
+| 4 Storyboard, prompts, gate criteria | Yes | Yes |
+| 4 Paid generation | Connector required | Connector required |
+| 5 Encode and optimize media | No repository access | Yes, if `ffmpeg` is in the session |
+| 6 Implement in the repository | Delivers files for you to commit | Yes, inside attached folders |
+| 7 Rendered visual QA | Browser or preview connector required | Browser or preview connector required |
+| 8 Deploy | No | Yes, with credentials |
+
+**Chat tab.** Code runs in a sandboxed container on Anthropic's infrastructure, not on your machine. It cannot see your repository unless you upload files or connect a local MCP server. Use it for the brief, direction, production package, storyboard, prompts, copy, adapted tokens, and component source, and take the files it produces into Claude Code.
+
+**Cowork.** Attach your project folder to the session and the agent reads, writes, and runs code inside it. Attach reference material read-only (`ro`) when it must not be modified. Cloud sessions can reach local files only while the desktop app is open on that machine, and local MCP servers do not run in cloud sessions.
+
+**Connectors.** Remote connectors — including Higgsfield at `https://mcp.higgsfield.ai/mcp` — work on every surface, and Anthropic reaches them from its cloud, so the server must be publicly reachable. Local MCP servers and desktop extensions run only in Claude Desktop and Claude Code; those are what give you filesystem access, localhost preview, and browser control. Without a browser or preview connector there is no rendered inspection on Desktop, so phase 7 stays open and the result is a handoff rather than a launch.
+
 ## Using it in ChatGPT
 
 If the skill has been installed through ChatGPT Skills, select it from the Skills interface or invoke it with:
@@ -432,6 +483,16 @@ first and preserve the existing framework.
 for a boutique architecture firm. Inspect the current repository
 first and preserve the existing framework.
 ```
+
+### Claude Desktop
+
+```text
+Use Build Beautiful Sites. Build a premium conversion-focused website
+for a boutique architecture firm. Tell me first which phases this
+surface can complete, then start with the creative direction.
+```
+
+In Cowork, attach the repository folder to the session first.
 
 ### ChatGPT
 
@@ -755,7 +816,7 @@ The skill may create the following files in the website repository:
 | `docs/asset-manifest.md`       | Asset source, provider, model, prompt version, cost, license, location, rejections, and fallback |
 | `docs/qa-report.md`            | Testing results, known issues, performance notes, and launch status           |
 
-These files are also the cross-agent handoff format. A ChatGPT session can write the direction and package, Codex or Claude Code can implement it, and neither has to restart the creative work.
+These files are also the cross-agent handoff format. A ChatGPT or Claude Desktop session can write the direction and package, Codex, Cowork, or Claude Code can implement it, and neither has to restart the creative work. This is the intended route when you start a project on Desktop: approve the direction there, then hand the same filenames to a surface that can render and deploy.
 
 If the project already has equivalent documents, the skill updates them rather than duplicating them.
 
@@ -842,6 +903,20 @@ Use:
 ```
 
 If the top-level skills directory was created after the session began, start a new Claude Code session. Also confirm that the folder name matches the `name` field in `SKILL.md` exactly.
+
+### The skill does not appear in Claude Desktop
+
+Desktop does not read `.claude/skills/`, so a Claude Code installation will never show up there. Upload the ZIP separately.
+
+Check, in order:
+
+* Code execution is enabled — **Settings > Capabilities**, or **Organization settings > Skills** on Team and Enterprise. Skills stay greyed out without it.
+* The skill is toggled on in **Customize > Skills**.
+* `SKILL.md` is inside the `build-beautiful-sites` folder within the archive, not loose at the archive root.
+* The folder name matches the `name` field in `SKILL.md` exactly.
+* The archive is not oversized, and the name and description contain no invalid characters.
+
+Re-upload the ZIP after any edit; Desktop does not pick up file changes on its own.
 
 ### The scripts fail with "permission denied"
 

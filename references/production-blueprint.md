@@ -19,7 +19,7 @@ Inspect the existing project before proposing technology. Record:
 - Brand assets, fonts, content, photography, video, and legal constraints
 - Target hosting and whether static export, server rendering, WordPress, or a CMS is required
 - Available media-generation tools and whether they are manual UI subscriptions or programmatic APIs
-- Current agent: Claude Code or Codex, including which image/video/browser/preview tools are actually available
+- Current agent and surface: Claude Code, Claude Desktop chat, Cowork, or Codex, including which image/video/browser/preview tools are actually available and which gates the surface can close
 
 Output `docs/site-brief.md` with known facts, assumptions, open decisions, and scope boundaries.
 
